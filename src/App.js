@@ -13,12 +13,19 @@ export default function App() {
     function handlePacked(id) {
         setList(list.map(item => item.id === id? {...item, packed: !item.packed} : item))
     }
+
+    function handleClearList() {
+        if (!list.length) return; 
+        
+        const confirmed = window.confirm('Are you sure you want to delete all items?')
+        if (confirmed) setList([]);
+    }
     
     return(
     <div>
         <Logo />
         <Form list={list} setList={setList} />
-        <List list={list} onDelete={handleDelete} onPacked={handlePacked} />
+        <List list={list} onDelete={handleDelete} onPacked={handlePacked} onClearList={handleClearList}/>
         <Stats list={list} />
     </div>
     )
@@ -70,7 +77,7 @@ function Form({list, setList}) {
     )
 }
 
-function List({list, onDelete, onPacked}) {
+function List({list, onDelete, onPacked, onClearList}) {
     const [sortBy, setSortBy] = useState('input');
 console.log(sortBy)
 
@@ -84,12 +91,15 @@ console.log(sortBy)
             <ul>
                 {sortedItems.map(item => <Item item={item} key={item.id} onDelete={onDelete} list={list} onPacked={onPacked}/>)}
             </ul>
-            <select className='actions' value={sortBy} onChange={e => setSortBy(e.target.value)}>
-                <option value='input'>Sort by input</option>
-                <option value='description'>Sort by description</option>
-                <option value='packed'>Sort by packed</option>
+            <div className='actions'>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+                    <option value='input'>Sort by input</option>
+                    <option value='description'>Sort by description</option>
+                    <option value='packed'>Sort by packed</option>
 
-            </select>
+                </select>
+                <button onClick={onClearList}>Clear List</button>
+            </div>
         </div>
     )
 }
